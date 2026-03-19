@@ -40,16 +40,7 @@ function App() {
         <div className="avatar-wrapper">
           <AvatarCall
             avatarId={AVATAR_ID}
-            connect={async (avatarId) => {
-              const res = await fetch('/api/create-session', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ avatarId }),
-              });
-              const data = await res.json();
-              console.log('Server returned:', data);
-              return data;
-            }}
+            connectUrl="/api/create-session"
           />
         </div>
       </div>
