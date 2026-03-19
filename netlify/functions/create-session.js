@@ -14,7 +14,8 @@ export async function handler(event) {
       };
     }
 
-    const response = await fetch('https://api.dev.runwayml.com/v1/realtime_sessions', {
+    // Step 1: Create the session
+    const createResponse = await fetch('https://api.dev.runwayml.com/v1/realtime_sessions', {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${apiKey}`,
@@ -30,19 +31,51 @@ export async function handler(event) {
       }),
     });
 
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error('Runway API error:', response.status, errorText);
+    if (!createResponse.ok) {
+      const errorText = await createResponse.text();
+      console.error('Runway create error:', createResponse.status, errorText);
       return {
-        statusCode: response.status,
-        body: JSON.stringify({ error: 'Runway API error', details: errorText }),
+        statusCode: createResponse.status,
+        body: JSON.stringify({ error: 'Runway create error', details: errorText }),
       };
     }
 
-    const session = await response.json();
-    console.log('FULL RUNWAY RESPONSE:', JSON.stringify(session));
+    const created = await createResponse.json();
+    console.log('Created session:', created.id);
 
-    // Pass through the entire response — let the SDK pick what it needs
+    // Step 2: Retrieve session to get connection credentials
+    // Poll up to 10 times with 1s delay
+    let session = null;
+    for (let i = 0; i < 10; i++) {
+      const getResponse = await fetch(`https://api.dev.runwayml.com/v1/realtime_sessions/${created.id}`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${apiKey}`,
+          'X-Runway-Version': '2024-11-06',
+        },
+      });
+
+      if (getResponse.ok) {
+        session = await getResponse.json();
+        console.log(`Poll ${i + 1} - FULL SESSION:`, JSON.stringify(session));
+
+        // Check if credentials are available
+        if (session.token || session.url || session.room_name) {
+          break;
+        }
+      }
+
+      // Wait 1 second before next poll
+      await new Promise(resolve => setTimeout(resolve, 1000));
+    }
+
+    if (!session) {
+      return {
+        statusCode: 500,
+        body: JSON.stringify({ error: 'Failed to retrieve session credentials' }),
+      };
+    }
+
     return {
       statusCode: 200,
       headers: { 'Content-Type': 'application/json' },
