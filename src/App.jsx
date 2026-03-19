@@ -41,6 +41,14 @@ function App() {
           <AvatarCall
             avatarId={AVATAR_ID}
             connectUrl="/api/create-session"
+            onError={(error) => {
+              console.error('AvatarCall error:', error);
+              alert('Connection error: ' + (error?.message || JSON.stringify(error)));
+            }}
+            onEnd={() => {
+              console.log('Call ended');
+              setEnded(true);
+            }}
           />
         </div>
       </div>
