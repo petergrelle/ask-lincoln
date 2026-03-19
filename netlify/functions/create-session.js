@@ -43,10 +43,10 @@ export async function handler(event) {
     const created = await createResponse.json();
     console.log('Created session:', created.id);
 
-    // Step 2: Retrieve session to get connection credentials
-    // Poll up to 10 times with 1s delay
-    let session = null;
-    for (let i = 0; i < 10; i++) {
+    // Step 2: Poll until READY
+    for (let i = 0; i < 15; i++) {
+      await new Promise(resolve => setTimeout(resolve, 1000));
+
       const getResponse = await fetch(`https://api.dev.runwayml.com/v1/realtime_sessions/${created.id}`, {
         method: 'GET',
         headers: {
@@ -56,30 +56,27 @@ export async function handler(event) {
       });
 
       if (getResponse.ok) {
-        session = await getResponse.json();
-        console.log(`Poll ${i + 1} - FULL SESSION:`, JSON.stringify(session));
+        const session = await getResponse.json();
+        console.log(`Poll ${i + 1}:`, session.status);
 
-        // Check if credentials are available
-        if (session.token || session.url || session.room_name) {
-          break;
+        if (session.status === 'READY' && session.sessionKey) {
+          console.log('Session ready, returning credentials');
+          return {
+            statusCode: 200,
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              id: session.id,
+              sessionKey: session.sessionKey,
+              expiresAt: session.expiresAt,
+            }),
+          };
         }
       }
-
-      // Wait 1 second before next poll
-      await new Promise(resolve => setTimeout(resolve, 1000));
-    }
-
-    if (!session) {
-      return {
-        statusCode: 500,
-        body: JSON.stringify({ error: 'Failed to retrieve session credentials' }),
-      };
     }
 
     return {
-      statusCode: 200,
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(session),
+      statusCode: 500,
+      body: JSON.stringify({ error: 'Session did not become ready in time' }),
     };
   } catch (error) {
     console.error('Session creation failed:', error);
