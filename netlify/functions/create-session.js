@@ -65,9 +65,8 @@ export async function handler(event) {
             statusCode: 200,
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-              id: session.id,
+              sessionId: session.id,
               sessionKey: session.sessionKey,
-              expiresAt: session.expiresAt,
             }),
           };
         }
