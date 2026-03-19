@@ -1,6 +1,6 @@
-import Runway from '@runwayml/sdk';
+import RunwayML from '@runwayml/sdk';
 
-const runway = new Runway(); // Uses RUNWAYML_API_SECRET env var
+const client = new RunwayML();
 
 export async function handler(event) {
   if (event.httpMethod !== 'POST') {
@@ -17,10 +17,11 @@ export async function handler(event) {
       };
     }
 
-    const session = await runway.realtime.sessions.create({
+    const session = await client.realtimeSessions.create({
       model: 'gwm1_avatars',
-      options: {
-        avatar: avatarId,
+      avatar: {
+        type: 'custom',
+        avatarId: avatarId,
       },
     });
 
