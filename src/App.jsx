@@ -40,7 +40,16 @@ function App() {
         <div className="avatar-wrapper">
           <AvatarCall
             avatarId={AVATAR_ID}
-            connectUrl="/api/create-session"
+            connect={async (avatarId) => {
+              const res = await fetch('/api/create-session', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ avatarId }),
+              });
+              const data = await res.json();
+              console.log('Server returned:', data);
+              return data;
+            }}
           />
         </div>
       </div>
@@ -57,8 +66,8 @@ function App() {
         </p>
         <div className="divider"></div>
         <p className="description">
-          Speak with Abraham Lincoln about leadership, the Constitution, 
-          the weight of difficult decisions, or whatever's on your mind. 
+          Speak with Abraham Lincoln about leadership, the Constitution,
+          the weight of difficult decisions, or whatever's on your mind.
           Click below to begin a real-time video conversation.
         </p>
         <button className="btn" onClick={() => setStarted(true)}>
