@@ -40,16 +40,13 @@ export async function handler(event) {
     }
 
     const session = await response.json();
+    console.log('FULL RUNWAY RESPONSE:', JSON.stringify(session));
 
+    // Pass through the entire response — let the SDK pick what it needs
     return {
       statusCode: 200,
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        sessionId: session.id,
-        serverUrl: session.url,
-        token: session.token,
-        roomName: session.room_name,
-      }),
+      body: JSON.stringify(session),
     };
   } catch (error) {
     console.error('Session creation failed:', error);
