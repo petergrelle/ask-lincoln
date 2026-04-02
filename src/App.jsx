@@ -10,31 +10,22 @@ function App() {
 
   if (phase === 'session') {
     return (
-      <div className="session-container">
-        <div className="session-header">
-          <h2 className="session-title">Ask Lincoln</h2>
-          <button className="btn btn-small" onClick={() => setPhase('ended')}>
-            End Conversation
-          </button>
-        </div>
-        <div className="avatar-wrapper">
-          <AvatarCall
-            avatarId={AVATAR_ID}
-            connectUrl="/api/create-session"
-            onEnd={() => {
-              console.log('Call ended')
-              setPhase('ended')
-            }}
-            onError={(err) => {
-              console.error('AvatarCall error:', err)
-              setError(err?.message || JSON.stringify(err))
-              setPhase('ended')
-            }}
-          />
-        </div>
-      </div>
+      <iframe
+        src="https://unclepeter.netlify.app/?id=eaa8b03d-0a6a-4bd0-83a9-039609b47808"
+        allow="camera; microphone; autoplay"
+        style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          width: '100%',
+          height: '100%',
+          border: 'none',
+          zIndex: 9999
+        }}
+      />
     )
   }
+
 
   if (phase === 'ended') {
     return (
