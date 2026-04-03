@@ -256,3 +256,56 @@ body::before {
   background: var(--bg-warm);
   border-top: 1px solid var(--border);
 }
+
+/* ── Access gate ── */
+.access-section {
+  margin: 1.5rem 0;
+  width: 100%;
+  max-width: 360px;
+}
+.code-input-row {
+  display: flex;
+  gap: 0.5rem;
+}
+.code-input {
+  flex: 1;
+  padding: 0.75rem 1rem;
+  font-family: inherit;
+  font-size: 1rem;
+  background: var(--bg-warm, #231f18);
+  color: var(--text, #e8dcc8);
+  border: 1px solid var(--border, #3d362a);
+  border-radius: 6px;
+  outline: none;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+.code-input::placeholder {
+  color: var(--text-muted, #a89a84);
+  text-transform: none;
+  letter-spacing: normal;
+}
+.btn-code {
+  padding: 0.75rem 1.25rem;
+  white-space: nowrap;
+}
+.or-divider {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin: 1rem 0;
+  color: var(--text-muted, #a89a84);
+  font-size: 0.85rem;
+}
+.or-divider::before,
+.or-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border, #3d362a);
+}
+.btn-buy {
+  width: 100%;
+  padding: 0.85rem 1.5rem;
+  font-size: 1.1rem;
+}
