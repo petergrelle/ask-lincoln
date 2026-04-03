@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 
-const AVATAR_URL = 'https://unclepeter.netlify.app/?id=eaa8b03d-0a6a-4bd0-83a9-039609b47808'
+const AVATAR_URL = 'const AVATAR_URL = 'https://unclepeter.netlify.app/?id=eaa8b03d-0a6a-4bd0-83a9-039609b47808&bypass=SGM2026'
+'
 const STRIPE_LINK = import.meta.env.VITE_STRIPE_LINK
 
 function App() {
