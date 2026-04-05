@@ -9,18 +9,22 @@ export async function handler(event) {
       },
     })
     const data = await res.json()
-    const available = data.credits === undefined || data.credits >= minCredits
 
+    // Temporarily return the full response so we can see the field names
     return {
       statusCode: 200,
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ available }),
+      body: JSON.stringify({
+        runwayResponse: data,
+        minCredits,
+        available: data.credits === undefined || data.credits >= minCredits,
+      }),
     }
   } catch (e) {
     return {
       statusCode: 200,
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ available: true }),
+      body: JSON.stringify({ error: e.message, available: true }),
     }
   }
 }
