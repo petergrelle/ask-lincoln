@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react'
 
 const AVATAR_URL = 'https://unclepeter.netlify.app/?id=eaa8b03d-0a6a-4bd0-83a9-039609b47808&bypass=SGM2026'
-
 const STRIPE_LINK = import.meta.env.VITE_STRIPE_LINK
 
 function App() {
@@ -10,8 +9,16 @@ function App() {
   const [error, setError] = useState(null)
   const [codeLoading, setCodeLoading] = useState(false)
   const [paymentLoading, setPaymentLoading] = useState(false)
+  const [soldOut, setSoldOut] = useState(false)
 
   useEffect(() => {
+    fetch('/api/check-capacity')
+      .then((res) => res.json())
+      .then((data) => {
+        if (!data.available) setSoldOut(true)
+      })
+      .catch(() => {})
+
     const params = new URLSearchParams(window.location.search)
     const sessionId = params.get('session_id')
     if (sessionId) {
@@ -129,15 +136,29 @@ function App() {
               <span>or</span>
             </div>
 
-            <button className="btn btn-buy" onClick={handleBuyAccess}>
-              Buy Access — $1.99
-            </button>
+            {soldOut ? (
+              <p className="error-msg">
+                Sessions are temporarily unavailable. Please check back soon!
+              </p>
+            ) : (
+              <button className="btn btn-buy" onClick={handleBuyAccess}>
+                Buy Access — $1.99
+              </button>
+            )}
           </div>
         )}
 
-        <p className="note">
-          Requires camera &amp; microphone access &middot; Best in Chrome
-        </p>
+        <div className="disclaimer">
+          <p className="note">
+            Requires camera &amp; microphone access &middot; Best in Chrome
+          </p>
+          <p className="note">
+            For best results, use a quiet environment with no background noise.
+          </p>
+          <p className="note disclaimer-text">
+            By proceeding, you acknowledge that conversations are recorded and stored.
+          </p>
+        </div>
       </div>
       <footer className="footer">
         Built with{' '}
